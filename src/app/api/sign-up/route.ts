@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         const verifyCodeExpiry = new Date()
         verifyCodeExpiry.setHours(verifyCodeExpiry.getHours() + 1)
         
-        const newUser = new UserModel({
+        const newUser = await UserModel.create({
             username,
             email,
             password:hashedPassword,

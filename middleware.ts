@@ -66,4 +66,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: ['/sign-in', '/sign-up', '/', '/dashboard/:path*', '/verify/:path*','/u/:username'],
 };
-//mongodb+srv://YousafHaseen:tehseenyousaf@haseen0.rspee.mongodb.net
