@@ -7,8 +7,9 @@ import mongoose from "mongoose";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { messageid: string } }
+  { params }: { params: Promise<{ messageid?: string }> }
 ) {
+  const { messageid } = await params;
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user = session?.user;
@@ -21,7 +22,7 @@ export async function DELETE(
   }
 
   try {
-    const objectId = new mongoose.Types.ObjectId(params.messageid);
+    const objectId = new mongoose.Types.ObjectId(messageid);
     const updatedResult = await UserModel.updateOne(
       { _id: user._id, "messages._id": objectId },
       { $set: { "messages.$.deleted": true } } // Example: Marking the message as deleted
