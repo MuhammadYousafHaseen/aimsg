@@ -31,24 +31,24 @@ export async function DELETE(
 
   try {
     const objectId = new mongoose.Types.ObjectId(messageid);
-    const updatedResult = await User.findOneAndUpdate(
+    const updatedResult = await UserModel.findOneAndUpdate(
       { 'messages._id': messageid },
       { $pull: { messages: { _id: messageid } } },
       { new: true }
     );
 
-    if (updatedResult.modifiedCount === 0) {
+   if (!updatedResult) {
       return NextResponse.json(
-        { success: false, message: "Message not found or already deleted" },
+        { success: false, message: "Message not found" },
         { status: 404 }
       );
     }
-
-    // Remove the unset fields
-    await UserModel.updateOne(
-      { _id: user._id },
-      { $pull: { messages: null } }
-    );
+    // Optionally, you can also return the updated messages array
+    // const updatedMessages = updatedResult.messages;
+    // return NextResponse.json(
+    //   { success: true, messages: updatedMessages },
+    //   { status: 200 }   
+    // );
 
     return NextResponse.json(
       { success: true, message: "Message deleted successfully" },
