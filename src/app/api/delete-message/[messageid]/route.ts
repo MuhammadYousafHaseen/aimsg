@@ -7,9 +7,15 @@ import mongoose from "mongoose";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ messageid?: string }> }
+  { params }: { params: { messageid?: string } }
 ) {
-  const { messageid } = await params;
+  if (!params?.messageid) {
+    return NextResponse.json(
+      { success: false, message: "Invalid message ID" },
+      { status: 400 }
+    );
+  }
+
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user = session?.user;
@@ -22,10 +28,11 @@ export async function DELETE(
   }
 
   try {
-    const objectId = new mongoose.Types.ObjectId(messageid);
+    const objectId = new mongoose.Types.ObjectId(params.messageid);
     const updatedResult = await UserModel.updateOne(
-      { _id: user._id, "messages._id": objectId },
-      { $set: { "messages.$.deleted": true } } // Example: Marking the message as deleted
+      { _id: user._id },
+      { $unset: { "messages.$[elem]": "" } },
+      { arrayFilters: [{ "elem._id": objectId }] }
     );
 
     if (updatedResult.modifiedCount === 0) {
@@ -34,6 +41,12 @@ export async function DELETE(
         { status: 404 }
       );
     }
+
+    // Remove the unset fields
+    await UserModel.updateOne(
+      { _id: user._id },
+      { $pull: { messages: null } }
+    );
 
     return NextResponse.json(
       { success: true, message: "Message deleted successfully" },
