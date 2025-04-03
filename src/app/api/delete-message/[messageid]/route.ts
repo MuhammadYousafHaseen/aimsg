@@ -7,9 +7,11 @@ import mongoose from "mongoose";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { messageid?: string } }
+  { params }: { params: Promise<{ messageid?: string }> }
 ) {
-  if (!params?.messageid) {
+  const { messageid } = await params;
+  // function body
+  if (!messageid) {
     return NextResponse.json(
       { success: false, message: "Invalid message ID" },
       { status: 400 }
@@ -28,7 +30,7 @@ export async function DELETE(
   }
 
   try {
-    const objectId = new mongoose.Types.ObjectId(params.messageid);
+    const objectId = new mongoose.Types.ObjectId(messageid);
     const updatedResult = await UserModel.updateOne(
       { _id: user._id },
       { $unset: { "messages.$[elem]": "" } },
