@@ -31,10 +31,10 @@ export async function DELETE(
 
   try {
     const objectId = new mongoose.Types.ObjectId(messageid);
-    const updatedResult = await UserModel.updateOne(
-      { _id: user._id },
-      { $unset: { "messages.$[elem]": "" } },
-      { arrayFilters: [{ "elem._id": objectId }] }
+    const updatedResult = await User.findOneAndUpdate(
+      { 'messages._id': messageid },
+      { $pull: { messages: { _id: messageid } } },
+      { new: true }
     );
 
     if (updatedResult.modifiedCount === 0) {

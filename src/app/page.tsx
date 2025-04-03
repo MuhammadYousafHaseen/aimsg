@@ -13,7 +13,7 @@ import messages from "@/data/messages.json";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FaCopyright } from "react-icons/fa";
 
-export function Home() {
+export default function Home() {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(1);
   const [count, setCount] = useState(0);
@@ -93,4 +93,4 @@ export function Home() {
   );
 }
 
-export default Home;
+
