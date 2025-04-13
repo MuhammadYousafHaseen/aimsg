@@ -1,3 +1,4 @@
+"use client"
 import { Message } from '@/model/user.model';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
